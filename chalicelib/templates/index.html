@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+{% for incident in trigerreds %}
+<div class ="col-6 col-sm-4 col-md-3 p-2">
+<div class="card border-danger h-150">
+  <div class="card-header "> {{ incident.service.summary }} | {{ incident.urgency }}</div>
+  <div class="card-body">
+    <p class="card-text"> {{ incident.title|truncate(150) }}</p>
+    <p class="card-text"><small class="text-muted">Created on {{ incident.created_at }}</small></p>
+  </div>
+</div>
+</div>
+{% endfor %}
+{% for incident in acknowledgeds %}
+<div class ="col-6 col-sm-4 col-md-3 p-2">
+<div class="card border-info h-150">
+  <div class="card-header "> {{ incident.service.summary }} | {{ incident.urgency }}</div>
+  <div class="card-body">
+    <p class="card-text"> {{ incident.title|truncate(150) }}</p>
+    <p class="card-text"><small class="text-muted">Created on {{ incident.created_at }}</small></p>
+  </div>
+</div>
+</div>
+{% endfor %}
+
+{% endblock %}
