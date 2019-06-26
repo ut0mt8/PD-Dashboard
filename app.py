@@ -1,4 +1,5 @@
 from chalice import Chalice, Response
+from datetime import date, timedelta
 import jinja2
 import os
 import pypd
@@ -10,10 +11,12 @@ app = Chalice(app_name='PD-Dashboard')
 def search(service_id=''):
     pypd.api_key = os.environ['PD_API_KEY']
 
+    fromdate = date.today() - timedelta(days=30)
+
     if service_id == '': 
-      incidents  = pypd.Incident.find(maximum=100, sort_by='created_at:DESC', since='2019-06-26')
+      incidents  = pypd.Incident.find(maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))
     else:
-      incidents  = pypd.Incident.find(service_ids=[id], maximum=100, sort_by='created_at:DESC', since='2019-06-26')
+      incidents  = pypd.Incident.find(service_ids=[id], maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))
 
     triggered = [incident for incident in incidents if incident.json['status'] == 'triggered'];
     acknowledged = [incident for incident in incidents if incident.json['status'] == 'acknowledged'];
