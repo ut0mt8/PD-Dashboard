@@ -16,7 +16,7 @@ def search(service_id=''):
     if service_id == '': 
       incidents  = pypd.Incident.find(maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))
     else:
-      incidents  = pypd.Incident.find(service_ids=[id], maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))
+      incidents  = pypd.Incident.find(service_ids=[service_id], maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))
 
     triggered = [incident for incident in incidents if incident.json['status'] == 'triggered'];
     acknowledged = [incident for incident in incidents if incident.json['status'] == 'acknowledged'];
