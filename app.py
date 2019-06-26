@@ -3,26 +3,39 @@ import jinja2
 import os
 import pypd
 
-pypd.api_key = "XXXX"
+
 app = Chalice(app_name='PD-Dashboard')
+
+
+def search(service_id=''):
+    pypd.api_key = os.environ['PD_API_KEY']
+
+    if service_id == '': 
+      incidents  = pypd.Incident.find(maximum=100, sort_by='created_at:DESC', since='2019-06-26')
+    else:
+      incidents  = pypd.Incident.find(service_ids=[id], maximum=100, sort_by='created_at:DESC', since='2019-06-26')
+
+    triggered = [incident for incident in incidents if incident.json['status'] == 'triggered'];
+    acknowledged = [incident for incident in incidents if incident.json['status'] == 'acknowledged'];
+    resolved = [incident for incident in incidents if incident.json['status'] == 'resolved'];
+
+    return (triggered, acknowledged, resolved)
 
 def render(tpl_path, context):
     path, filename = os.path.split(tpl_path)
-    return jinja2.Environment(loader=jinja2.FileSystemLoader(path or "./")).get_template(filename).render(context)
+    return jinja2.Environment(loader=jinja2.FileSystemLoader(path or './')).get_template(filename).render(context)
 
-@app.route("/")
+def publish(triggered, acknowledged, resolved):
+    context = {'triggered' : triggered, 'acknowledged' : acknowledged, 'resolved' : resolved}
+    template = render('chalicelib/templates/index.html', context)
+    return Response(template, status_code=200, headers={'Content-Type': 'text/html'})
+
+@app.route('/')
 def index():
-    triggereds = pypd.Incident.find(statuses=['triggered'])
-    acknowledgeds = pypd.Incident.find(statuses=['acknowledged'])
-    context = {'triggereds' : triggereds, 'acknowledgeds' : acknowledgeds}
-    template = render('chalicelib/templates/index.html', context)
-    return Response(template, status_code=200, headers={"Content-Type": "text/html"})
+    (triggered, acknowledged, resolved) = search()
+    return publish(triggered, acknowledged, resolved)
 
-@app.route("/service/{id}")
+@app.route('/service/{id}')
 def service(id):
-    triggereds = pypd.Incident.find(service_ids=[id], statuses=['triggered'])
-    acknowledgeds = pypd.Incident.find(service_ids=[id], statuses=['acknowledged'])
-    context = {'triggereds' : triggereds, 'acknowledgeds' : acknowledgeds}
-    template = render('chalicelib/templates/index.html', context)
-    return Response(template, status_code=200, headers={"Content-Type": "text/html"})
-
+    (triggered, acknowledged, resolved) = search(id)
+    return publish(triggered, acknowledged, resolved)
