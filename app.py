@@ -7,13 +7,11 @@ import pypd
 
 app = Chalice(app_name='PD-Dashboard')
 
-
 def search(service_id=''):
     pypd.api_key = os.environ['PD_API_KEY']
-
     fromdate = date.today() - timedelta(days=30)
 
-    if service_id == '': 
+    if service_id: 
       incidents  = pypd.Incident.find(maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))
     else:
       incidents  = pypd.Incident.find(service_ids=[service_id], maximum=100, sort_by='created_at:DESC', since=fromdate.strftime('%Y-%m-%d'))

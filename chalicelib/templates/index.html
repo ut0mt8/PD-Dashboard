@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<HTML>
-    <HEAD>
-        <META charset="UTF-8">
-        <META http-equiv="refresh" content="60">
-        <TITLE>PagerDuty Dashboard</TITLE>
-        <STYLE type="text/css">
-BODY {
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="refresh" content="60">
+        <title>PagerDuty Dashboard</title>
+        <style type="text/css">
+body {
     margin: 0;
     font-family: helvetica;
     color: white;
@@ -117,46 +117,46 @@ BODY {
     background-color: #FF800080;
 }
 
-        </STYLE>
-    </HEAD>
-    <BODY>
-        <DIV class="title">
+      </style>
+    </head>
+    <body>
+        <div class="title">
             PagerDuty Dashboard
-        </DIV>
-        <DIV class="content">
-            <DIV class="triggered">
+        </div>
+        <div class="content">
+            <div class="triggered">
                 Triggered incidents
 {% for incident in triggered %}
-                <DIV class="incident">
-                    <DIV class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</DIV>
-                    <DIV class="incident_service">{{ incident.service.summary }}</DIV>
-                    <DIV class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</DIV>
-                    <DIV class="incident_createdat">Created on {{ incident.created_at }}</DIV>
-                </DIV>
+                <div class="incident">
+                    <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                    <div class="incident_service">{{ incident.service.summary }}</div>
+                    <div class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</div>
+                    <div class="incident_createdat">Created on {{ incident.created_at }}</div>
+                </div>
 {% endfor %}
-            </DIV>
-            <DIV class="acknowledged">
+            </div>
+            <div class="acknowledged">
                 Acknowledged incidents
 {% for incident in acknowledged %}
-                <DIV class="incident">
-                    <DIV class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</DIV>
-                    <DIV class="incident_service">{{ incident.service.summary }}</DIV>
-                    <DIV class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</DIV>
-                    <DIV class="incident_createdat">Created on {{ incident.created_at }}</DIV>
-                </DIV>
+                <div class="incident">
+                    <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                    <div class="incident_service">{{ incident.service.summary }}</div>
+                    <div class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</div>
+                    <div class="incident_createdat">Created on {{ incident.created_at }}</div>
+                </div>
 {% endfor %}
-            </DIV>
-            <DIV class="resolved">
+            </div>
+            <div class="resolved">
                 Last resolved incidents
 {% for incident in resolved[:5] %}
-                <DIV class="incident">
-                    <DIV class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</DIV>
-                    <DIV class="incident_service">{{ incident.service.summary }}</DIV>
-                    <DIV class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</DIV>
-                    <DIV class="incident_createdat">Created on {{ incident.created_at }}</DIV>
-                </DIV>
+                <div class="incident">
+                    <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                    <div class="incident_service">{{ incident.service.summary }}</div>
+                    <div class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</div>
+                    <div class="incident_createdat">Created on {{ incident.created_at }}</div>
+                </div>
 {% endfor %}
-            </DIV>
-        </DIV>
-    </BODY>
+            </div>
+        </div>
+    </body>
 </html>
