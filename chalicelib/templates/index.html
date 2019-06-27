@@ -1,26 +1,162 @@
-{% extends 'base.html' %}
-{% block content %}
-{% for incident in trigerreds %}
-<div class ="col-6 col-sm-4 col-md-3 p-2">
-<div class="card border-danger h-150">
-  <div class="card-header "> {{ incident.service.summary }} | {{ incident.urgency }}</div>
-  <div class="card-body">
-    <p class="card-text"> {{ incident.title|truncate(150) }}</p>
-    <p class="card-text"><small class="text-muted">Created on {{ incident.created_at }}</small></p>
-  </div>
-</div>
-</div>
-{% endfor %}
-{% for incident in acknowledgeds %}
-<div class ="col-6 col-sm-4 col-md-3 p-2">
-<div class="card border-info h-150">
-  <div class="card-header "> {{ incident.service.summary }} | {{ incident.urgency }}</div>
-  <div class="card-body">
-    <p class="card-text"> {{ incident.title|truncate(150) }}</p>
-    <p class="card-text"><small class="text-muted">Created on {{ incident.created_at }}</small></p>
-  </div>
-</div>
-</div>
-{% endfor %}
+<!DOCTYPE html>
 
-{% endblock %}
+<HTML>
+    <HEAD>
+        <META charset="UTF-8">
+        <META http-equiv="refresh" content="60">
+        <TITLE>PagerDuty Dashboard</TITLE>
+        <STYLE type="text/css">
+BODY {
+    margin: 0;
+    font-family: helvetica;
+    color: white;
+    background-color: black;
+}
+
+.title {
+    padding: 8px 0 0 48px;
+    width: 100%;
+    height: 40px;
+    background-image: url("https://avatars2.githubusercontent.com/u/766800?s=200&v=4");
+    background-position-x: 10px;
+    background-position-y: 8px;
+    background-size: 32px 32px;
+    background-repeat: no-repeat;
+    background-color: #404040;
+    border-bottom: 1px #808080 solid;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+.triggered {
+    margin: 20px 10px 10px 10px;
+    font-size: 20pt;
+}
+
+.acknowledged {
+    margin: 10px 10px 10px 10px;
+    font-size: 20pt;
+}
+
+.resolved {
+    margin: 10px 10px 10px 10px;
+    font-size: 20pt;
+}
+
+.incident {
+    margin: 10px 0 10px 0;
+    position:relative;
+    font-size: 16pt;
+    background-color: #808080;
+    border:1px #404040 solid;
+    height: 64px;
+}
+
+.incident A {
+    color: #FFFFFF;
+    font-size: 20pt;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.triggered .incident{
+    background-color: #800000;
+    border:1px #C00000 solid;
+}
+
+.acknowledged .incident{
+    background-color: #0080C0;
+    border:1px #00C0FF solid;
+}
+
+.resolved .incident{
+    background-color: #008020;
+    border:1px #00C040 solid;
+}
+
+.incident_urgency {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 100px;
+    text-align: center;
+}
+
+.incident_service {
+    position: absolute;
+    left: 120px;
+    top: 10px;
+    width: 200px;
+    text-align: center;
+    background-color: #FFFFFF40;
+}
+
+.incident_title {
+    position: absolute;
+    left: 330px;
+    top: 10px;
+    width: calc(100% - 345px);
+    height: 48px;
+}
+
+.incident_createdat {
+    position: absolute;
+    left: 10px;
+    top: 40px;
+    width: 310px;
+    font-size: 12pt;
+    text-align: center;
+    background-color: #FFFFFF20;
+}
+
+.high {
+    background-color: #FF000080;
+}
+
+.low {
+    background-color: #FF800080;
+}
+
+        </STYLE>
+    </HEAD>
+    <BODY>
+        <DIV class="title">
+            PagerDuty Dashboard
+        </DIV>
+        <DIV class="content">
+            <DIV class="triggered">
+                Triggered incidents
+{% for incident in triggered %}
+                <DIV class="incident">
+                    <DIV class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</DIV>
+                    <DIV class="incident_service">{{ incident.service.summary }}</DIV>
+                    <DIV class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</DIV>
+                    <DIV class="incident_createdat">Created on {{ incident.created_at }}</DIV>
+                </DIV>
+{% endfor %}
+            </DIV>
+            <DIV class="acknowledged">
+                Acknowledged incidents
+{% for incident in acknowledged %}
+                <DIV class="incident">
+                    <DIV class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</DIV>
+                    <DIV class="incident_service">{{ incident.service.summary }}</DIV>
+                    <DIV class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</DIV>
+                    <DIV class="incident_createdat">Created on {{ incident.created_at }}</DIV>
+                </DIV>
+{% endfor %}
+            </DIV>
+            <DIV class="resolved">
+                Last resolved incidents
+{% for incident in resolved[:5] %}
+                <DIV class="incident">
+                    <DIV class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</DIV>
+                    <DIV class="incident_service">{{ incident.service.summary }}</DIV>
+                    <DIV class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</DIV>
+                    <DIV class="incident_createdat">Created on {{ incident.created_at }}</DIV>
+                </DIV>
+{% endfor %}
+            </DIV>
+        </DIV>
+    </BODY>
+</html>
