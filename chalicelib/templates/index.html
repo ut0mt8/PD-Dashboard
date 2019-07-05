@@ -6,6 +6,7 @@
         <meta http-equiv="refresh" content="60">
         <title>PagerDuty Dashboard</title>
         <style type="text/css">
+
 body {
     margin: 0;
     font-family: helvetica;
@@ -14,149 +15,99 @@ body {
 }
 
 .title {
-    padding: 8px 0 0 48px;
-    width: 100%;
-    height: 40px;
-    background-image: url("https://avatars2.githubusercontent.com/u/766800?s=200&v=4");
-    background-position-x: 10px;
-    background-position-y: 8px;
-    background-size: 32px 32px;
-    background-repeat: no-repeat;
-    background-color: #404040;
-    border-bottom: 1px #808080 solid;
-    font-size: 20pt;
-    font-weight: bold;
+    font-size: 18pt;
+    margin: 10px 5px 5px 5px;
 }
 
 .triggered {
-    margin: 20px 10px 10px 10px;
-    font-size: 20pt;
+    font-size: 14pt;
+    background-color: #800000;
+    margin: 5px; 
+    padding: 2px; 
+    border: 1px #c00000;
 }
 
 .acknowledged {
-    margin: 10px 10px 10px 10px;
-    font-size: 20pt;
+    font-size: 14pt;
+    background-color: #0080c0;
+    margin: 5px; 
+    padding: 2px; 
+    border: 1px #00c0ff;
 }
 
 .resolved {
-    margin: 10px 10px 10px 10px;
-    font-size: 20pt;
-}
-
-.incident {
-    margin: 10px 0 10px 0;
-    position:relative;
-    font-size: 16pt;
-    background-color: #808080;
-    border:1px #404040 solid;
-    height: 64px;
-}
-
-.incident A {
-    color: #FFFFFF;
-    font-size: 20pt;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.triggered .incident{
-    background-color: #800000;
-    border:1px #C00000 solid;
-}
-
-.acknowledged .incident{
-    background-color: #0080C0;
-    border:1px #00C0FF solid;
-}
-
-.resolved .incident{
-    background-color: #008020;
-    border:1px #00C040 solid;
+    font-size: 14pt;
+    background-color: #40AA40;
+    margin: 5px; 
+    padding: 2px; 
+    border: 1px #00c040;
 }
 
 .incident_urgency {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: 100px;
-    text-align: center;
+    display: inline-block;
+    margin: 2px;
+    padding: 2px; 
 }
 
 .incident_service {
-    position: absolute;
-    left: 120px;
-    top: 10px;
-    width: 200px;
-    text-align: center;
-    background-color: #FFFFFF40;
+    display: inline-block;
+    margin: 2px;
+    padding: 2px; 
+    background-color: #ffffff40;
 }
 
 .incident_title {
-    position: absolute;
-    left: 330px;
-    top: 10px;
-    width: calc(100% - 345px);
-    height: 48px;
+    display: inline-block;
+    margin: 2px;
+    padding: 2px; 
 }
 
 .incident_createdat {
-    position: absolute;
-    left: 10px;
-    top: 40px;
-    width: 310px;
-    font-size: 12pt;
-    text-align: center;
-    background-color: #FFFFFF20;
+    font-size: 10pt;
+    margin: 2px;
+    padding: 2px; 
+    background-color: #ffffff20;
 }
 
 .high {
-    background-color: #FF000080;
+    background-color: #ff000080;
 }
 
 .low {
-    background-color: #FF800080;
+    background-color: #ff800080;
 }
 
       </style>
     </head>
     <body>
-        <div class="title">
-            PagerDuty Dashboard
-        </div>
-        <div class="content">
-            <div class="triggered">
-                Triggered incidents
+            <div class="title">Triggered incidents</div>
 {% for incident in triggered %}
-                <div class="incident">
-                    <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
-                    <div class="incident_service">{{ incident.service.summary }}</div>
-                    <div class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</div>
-                    <div class="incident_createdat">Created on {{ incident.created_at }}</div>
-                </div>
-{% endfor %}
+            <div class="triggered">
+                <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                <div class="incident_service">{{ incident.service.summary }}</div>
+                <div class="incident_title">{{ incident.title|truncate(150) }}</div>
+                <div class="incident_createdat">Created on {{ incident.created_at }}</div>
             </div>
-            <div class="acknowledged">
-                Acknowledged incidents
+{% endfor %}
+
+             <div class="title">Acknowledged incidents</div>
 {% for incident in acknowledged %}
-                <div class="incident">
-                    <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
-                    <div class="incident_service">{{ incident.service.summary }}</div>
-                    <div class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</div>
-                    <div class="incident_createdat">Created on {{ incident.created_at }}</div>
-                </div>
-{% endfor %}
+             <div class="acknowledged">
+                <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                <div class="incident_service">{{ incident.service.summary }}</div>
+                <div class="incident_title">{{ incident.title|truncate(150) }}</div>
+                <div class="incident_createdat">Created on {{ incident.created_at }}</div>
             </div>
-            <div class="resolved">
-                Last resolved incidents
+{% endfor %}
+
+            <div class="title">Last resolved incidents</div>
 {% for incident in resolved[:5] %}
-                <div class="incident">
-                    <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
-                    <div class="incident_service">{{ incident.service.summary }}</div>
-                    <div class="incident_title"><A href="{{ incident.html_url }}" target="blank">#{{ incident.incident_number }}</A> {{ incident.title|truncate(150) }}</div>
-                    <div class="incident_createdat">Created on {{ incident.created_at }}</div>
-                </div>
-{% endfor %}
+            <div class="resolved">
+                <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                <div class="incident_service">{{ incident.service.summary }}</div>
+                <div class="incident_title">{{ incident.title|truncate(150) }}</div>
+                <div class="incident_createdat">Created on {{ incident.created_at }}</div>
             </div>
-        </div>
+{% endfor %}
     </body>
 </html>
