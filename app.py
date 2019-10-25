@@ -1,22 +1,32 @@
 from chalice import Chalice, Response
+from datetime import datetime, timedelta
 import jinja2
 import os
 import pypd
 
-
 app = Chalice(app_name='PD-Dashboard')
+maxresults = 10
+delta = datetime.now() - timedelta(hours = 2)
+maxtime = delta.strftime('%Y-%m-%d %H:%M:%S')
 
 def search(service_id=''):
+    triggered = []
+    acknowledged = []
+
     pypd.api_key = os.environ['PD_API_KEY']
 
     if service_id: 
-      triggered  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', maximum=50, statuses=['triggered'] )
-      acknowledged  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', maximum=50, statuses=['acknowledged'] )
-      resolved  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', maximum=20, statuses=['resolved'] )
+      incidents  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', statuses=['triggered','acknowledged'] )
+      resolved  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', statuses=['resolved'], maximum=maxresults, since=maxtime)
     else:
-      triggered  = pypd.Incident.find(sort_by='created_at:DESC', maximum=50, statuses=['triggered'] )
-      acknowledged  = pypd.Incident.find(sort_by='created_at:DESC', maximum=50, statuses=['acknowledged'] )
-      resolved  = pypd.Incident.find(sort_by='created_at:DESC', maximum=20, statuses=['resolved'] )
+      incidents  = pypd.Incident.find(sort_by='created_at:DESC', statuses=['triggered','acknowledged'] )
+      resolved  = pypd.Incident.find(sort_by='created_at:DESC', statuses=['resolved'], maximum=maxresults, since=maxtime)
+
+    for incident in incidents:
+        if incident['status'] == "triggered":
+            triggered.append(incident)
+        elif incident['status'] == "acknowledged":
+            acknowledged.append(incident)
 
     return (triggered, acknowledged, resolved)
 

@@ -10,7 +10,7 @@
 body {
     margin: 0;
     font-family: helvetica;
-    color: white;
+    color: #cccccc; 
     background-color: black;
 }
 
@@ -19,12 +19,26 @@ body {
     margin: 10px 5px 5px 5px;
 }
 
-.triggered {
+.title_ok {
+    font-size: 18pt;
+    margin: 10px 5px 5px 5px;
+    color: #22cc22;
+}
+
+.triggered_high {
     font-size: 14pt;
     background-color: #800000;
     margin: 5px; 
     padding: 2px; 
     border: 1px #c00000;
+}
+
+.triggered_low {
+    font-size: 14pt;
+    background-color: #d7722c;
+    margin: 5px; 
+    padding: 2px; 
+    border: 1px #c09000;
 }
 
 .acknowledged {
@@ -37,10 +51,11 @@ body {
 
 .resolved {
     font-size: 14pt;
-    background-color: #40AA40;
+    color: #777777;
+    background-color: #242424;
     margin: 5px; 
     padding: 2px; 
-    border: 1px #00c040;
+    border: 1px #707070;
 }
 
 .incident_urgency {
@@ -73,6 +88,14 @@ body {
     background-color: #ff000080;
 }
 
+.high_acknowledged {
+    background-color: #ff400040;
+}
+
+.high_resolved {
+    background-color: #ff202020;
+}
+
 .low {
     background-color: #ff800080;
 }
@@ -80,30 +103,38 @@ body {
       </style>
     </head>
     <body>
+{% if triggered|length > 0 %}
             <div class="title">Triggered incidents</div>
 {% for incident in triggered %}
-            <div class="triggered">
+            <div class="triggered_{{ incident.urgency }}">
                 <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
                 <div class="incident_service">{{ incident.service.summary }}</div>
                 <div class="incident_title">{{ incident.title|truncate(150) }}</div>
                 <div class="incident_createdat">Created on {{ incident.created_at }}</div>
             </div>
 {% endfor %}
-
+{% else %}
+            <div class="title_ok">No triggered incident :)</div>
+{% endif %}
+            <hr/>
+{% if acknowledged|length > 0 %}
              <div class="title">Acknowledged incidents</div>
 {% for incident in acknowledged %}
              <div class="acknowledged">
-                <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                <div class="incident_urgency {{ incident.urgency }}_acknowledged">{{ incident.urgency|upper }}</div>
                 <div class="incident_service">{{ incident.service.summary }}</div>
                 <div class="incident_title">{{ incident.title|truncate(150) }}</div>
                 <div class="incident_createdat">Created on {{ incident.created_at }}</div>
             </div>
 {% endfor %}
-
-            <div class="title">Last resolved incidents</div>
-{% for incident in resolved[:5] %}
+{% else %}
+            <div class="title">No acknowledged incident :)</div>
+{% endif %}
+            <hr/>
+            <div class="title">Last resolved incidents (last 2 hours)</div>
+{% for incident in resolved[:6] %}
             <div class="resolved">
-                <div class="incident_urgency {{ incident.urgency }}">{{ incident.urgency|upper }}</div>
+                <div class="incident_urgency {{ incident.urgency }}_resolved">{{ incident.urgency|upper }}</div>
                 <div class="incident_service">{{ incident.service.summary }}</div>
                 <div class="incident_title">{{ incident.title|truncate(150) }}</div>
                 <div class="incident_createdat">Created on {{ incident.created_at }}</div>
