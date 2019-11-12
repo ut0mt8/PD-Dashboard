@@ -5,28 +5,34 @@ import os
 import pypd
 
 app = Chalice(app_name='PD-Dashboard')
-maxresults = 10
-delta = datetime.now() - timedelta(hours = 2)
-maxtime = delta.strftime('%Y-%m-%d %H:%M:%S')
 
-def search(service_id=''):
+def search(service_id='', urgency='high-only', maxresults=10):
     triggered = []
     acknowledged = []
+    resolved = []
+    delta = datetime.now() - timedelta(hours = 2)
+    maxtime = delta.strftime('%Y-%m-%d %H:%M:%S')
 
     pypd.api_key = os.environ['PD_API_KEY']
 
     if service_id: 
-      incidents  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', statuses=['triggered','acknowledged'] )
-      resolved  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', statuses=['resolved'], maximum=maxresults, since=maxtime)
+      incidents = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', statuses=['triggered','acknowledged'] )
+      rincidents  = pypd.Incident.find(service_ids=[service_id], sort_by='created_at:DESC', statuses=['resolved'], maximum=maxresults, since=maxtime)
     else:
-      incidents  = pypd.Incident.find(sort_by='created_at:DESC', statuses=['triggered','acknowledged'] )
-      resolved  = pypd.Incident.find(sort_by='created_at:DESC', statuses=['resolved'], maximum=maxresults, since=maxtime)
+      incidents = pypd.Incident.find(sort_by='created_at:DESC', statuses=['triggered','acknowledged'] )
+      rincidents = pypd.Incident.find(sort_by='created_at:DESC', statuses=['resolved'], maximum=maxresults, since=maxtime)
 
     for incident in incidents:
         if incident['status'] == "triggered":
-            triggered.append(incident)
+            if urgency == "all" or incident['urgency'] == "high":
+                triggered.append(incident)
         elif incident['status'] == "acknowledged":
-            acknowledged.append(incident)
+            if urgency == "all" or incident['urgency'] == "high":
+                acknowledged.append(incident)
+
+    for incident in rincidents:
+        if urgency == "all" or incident['urgency'] == "high": 
+            resolved.append(incident)
 
     return (triggered, acknowledged, resolved)
 
@@ -41,10 +47,33 @@ def publish(triggered, acknowledged, resolved):
 
 @app.route('/')
 def index():
-    (triggered, acknowledged, resolved) = search()
+    triggered = []
+    acknowledged = []
+    resolved = []
+    try:
+        (triggered, acknowledged, resolved) = search()
+    except:
+        pass
+    return publish(triggered, acknowledged, resolved)
+
+@app.route('/all')
+def index():
+    triggered = []
+    acknowledged = []
+    resolved = []
+    try:
+        (triggered, acknowledged, resolved) = search(urgency='all')
+    except:
+        pass
     return publish(triggered, acknowledged, resolved)
 
 @app.route('/service/{id}')
 def service(id):
-    (triggered, acknowledged, resolved) = search(id)
+    triggered = []
+    acknowledged = []
+    resolved = []
+    try:
+        (triggered, acknowledged, resolved) = search(id)
+    except:
+        pass
     return publish(triggered, acknowledged, resolved)
